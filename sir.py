@@ -7,16 +7,22 @@ import numpy as np
 import matplotlib.pyplot as plt
 import random as rnd
 
+
 # set parameters
 N= 100
 T= 100
 W= 30
 SEED=101
 agents= []
+PR = 0.03
+PI = 0.5
 
 TH=0.3
-colorlist=['red', 'blue']
+colorlist=['blue','red','green']
 averageSatisfaction=[]
+sList = []
+iList = []
+rList = []
 
 ## define functions
 def clip(x):
@@ -26,6 +32,9 @@ def clip(x):
         return(x-W)
     else:
         return(x)
+
+#p:0=>s p:1=>i p:2=>r
+
 
 
 ## define classes
@@ -53,22 +62,32 @@ class Agent(object):
         self.randomwalk()
         if(self.isOverlapped()==True):
             self.findNewSpace()
+    def getInfected(self):
+        if self.p == 0:
+            self.p = 1
 
-    def updateSatisfaction(self):
+    def updateInfected(self):
         neighbors= [agent for agent in agents  if (abs(agent.x-self.x)<=1 and abs(agent.y-self.y)<=1) and agent!=self]
         neighborsCount= len(neighbors)
-        sameCount= len([agent for agent in neighbors if (agent.p==self.p)])
-        self.s= (float(sameCount)/float(neighborsCount) if neighborsCount!=0 else 0.0)
+        if self.p == 1 or self.p == 3:
+            for agent in neighbors:
+                if rnd.random() <= PI:
+                    agent.getInfected()
+            if rnd.random() <= PR:
+                self.p = 2
+    def getCondition(self):
+        return self.p
 
     def seek(self):
-        self.updateSatisfaction()
-        if(self.s<TH):
-            self.findNewSpace()
+        self.updateInfected()
+        self.findNewSpace()
 
 
 # initialize variables
 rnd.seed(SEED)
-agents=[Agent(i%2) for i in range(N)]
+agents=[Agent(0) for i in range(N)]
+agents.append(Agent(1))
+print(agents)
 for a in agents:
     a.findNewSpace()
 
@@ -84,9 +103,20 @@ def main_loop(t):
 # events in a step
 def step():
     rnd.shuffle(agents)
+    sCnt = 0
+    iCnt = 0
+    rCnt = 0
     for a in agents:
         a.seek()
-    averageSatisfaction.append(np.average([a.s for a in agents]))
+        if a.getCondition() == 0:
+            sCnt += 1
+        elif a.getCondition() == 1:
+            iCnt += 1
+        else:
+            rCnt += 1
+    sList.append(sCnt)
+    iList.append(iCnt)
+    rList.append(rCnt)
 
 # update function for graph
 def update(t):
@@ -101,25 +131,22 @@ def update(t):
     ax1.set_xlabel('x')
     ax1.set_ylabel('y')
 
-    ax2= fig.add_subplot(2, 2, 3)
-    s= [a.s for a in agents]
-    ax2.hist(s, 10)
-    ax2.set_xlabel('satisfaction')
-    ax2.set_ylabel('frequency')
+    ax2= fig.add_subplot(2, 2, 2)
+    ax2.plot(sList)
+    ax2.set_xlabel('t')
+    ax2.set_ylabel('susceptible')
 
-    ax3= fig.add_subplot(2, 2, 4)
-    ax3.plot(averageSatisfaction)
+    ax3= fig.add_subplot(2, 2, 3)
+    ax3.plot(iList)
     ax3.set_xlabel('t')
-    ax3.set_ylabel('averageSatisfaction')
+    ax3.set_ylabel('infected')
+
+    ax4= fig.add_subplot(2, 2, 4)
+    ax4.plot(rList)
+    ax4.set_xlabel('t')
+    ax4.set_ylabel('recovered')
 
     plt.tight_layout()
 
 ani = animation.FuncAnimation(fig, main_loop, np.arange(0, T), interval=1, repeat=False)
 plt.show()
-
-# lis = [x/100 for x in range(101)]
-# ans = []
-# for th in lis:
-#     for t in range(T):
-#         main_loop(t)
-#     print(averageSatisfaction[-1])
