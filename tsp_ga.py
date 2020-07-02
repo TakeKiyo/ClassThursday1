@@ -147,9 +147,7 @@ fig= plt.figure()
 averageFitness= []
 bestFitness= []
 best= population[0]
-pp= []
-pf= []
- 
+
 # main loop (call back function for animation)
 def main_loop(t):
     step()
