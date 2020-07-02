@@ -71,21 +71,22 @@ def selectAnAgentByRoulette(pop):
     
 def selectAnAgentByTournament(pop): 
     leng = len(pop)
-    firstIdx = rnd.randint(0,leng-1)
-    secondIdx = rnd.randint(0,leng-1)
-    while firstIdx == secondIdx:
-        secondIdx = rnd.randint(0,leng-1)  
-    if pop[firstIdx].fitness < pop[secondIdx].fitness:
-        return pop[firstIdx]
-    else:
-        return pop[secondIdx]
+    dic = {}
+    for i in range(10):
+        Idx = rnd.randint(0,leng-1)
+        dic[Idx] = pop[Idx].fitness
+    dic2 = sorted(dic.items(), key=lambda x:x[1])       
+    return pop[dic2[0][0]]
    
 def crossover(a1, a2):
-    point= rnd.randint(1, L-1)
-    for i in range(point, L):
+    tmp1 = rnd.randint(1, L-1)
+    tmp2 = rnd.randint(1, L-1)
+    maxPoint = max(tmp1,tmp2)
+    point= min(tmp1,tmp2)
+    for i in range(point, maxPoint):
         a1.genotype[i], a2.genotype[i]= a2.genotype[i], a1.genotype[i]
-    a1_sub = a1.genotype[point:L]
-    a2_sub = a2.genotype[point:L]
+    a1_sub = a1.genotype[point:maxPoint]
+    a2_sub = a2.genotype[point:maxPoint]
     rest_a1 = list(set(range(L))-set(a1.genotype))
     rest_a2 = list(set(range(L))-set(a2.genotype))
     rnd.shuffle(rest_a1)
@@ -101,7 +102,17 @@ def crossover(a1, a2):
         else:
             a2.genotype[i] =rest_a2[0]
             rest_a2.pop(0)
-
+    for i in range(maxPoint,L):
+        if a1.genotype[i] not in a1_sub:
+            pass
+        else:
+            a1.genotype[i] =rest_a1[0]
+            rest_a1.pop(0)
+        if a2.genotype[i] not in a2_sub:
+            pass
+        else:
+            a2.genotype[i] =rest_a2[0]
+            rest_a2.pop(0)
 
 
   
@@ -109,7 +120,7 @@ def crossover(a1, a2):
   
 # initialize variables
 SEED=101
-T=200
+T=100
 N= 30
 G= 100
 # L= 20
