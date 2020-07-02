@@ -69,8 +69,20 @@ def selectAnAgentByRoulette(pop):
         if (val<0):
             return(i)
     
-def selectAnAgentByTournament(pop): 
+def selectAnAgentByTournament(pop):
     leng = len(pop)
+
+    # 2つを選んで，適応度の小さいほうを使用
+    # firstIdx = rnd.randint(0,leng-1)
+    # secondIdx = rnd.randint(0,leng-1)
+    # while firstIdx == secondIdx:
+    #     secondIdx = rnd.randint(0,leng-1)  
+    # if pop[firstIdx].fitness < pop[secondIdx].fitness:
+    #     return pop[firstIdx]
+    # else:
+    #     return pop[secondIdx]
+
+    # 10個選んで，適応度の一番小さいpopを返す
     dic = {}
     for i in range(10):
         Idx = rnd.randint(0,leng-1)
@@ -135,8 +147,6 @@ fig= plt.figure()
 averageFitness= []
 bestFitness= []
 best= population[0]
-# sx= np.arange(0, 1.01, 0.01)
-# sy= [fitnessFunction(i) for i in sx]  
 pp= []
 pf= []
  
@@ -157,8 +167,6 @@ def step():
             best= a
     averageFitness.append(np.average([a.fitness for a in population]))
     bestFitness.append(best.fitness)     
-    # pp= [a.phenotype for a in population]
-    # pf= [a.fitness for a in population]  
     
 
     tmpX = []
@@ -166,6 +174,8 @@ def step():
     for i in range(L):
         tmpX.append(CoordinateX[best.genotype[i]])
         tmpY.append(CoordinateY[best.genotype[i]]) 
+    tmpX.append(CoordinateX[best.genotype[0]])
+    tmpY.append(CoordinateY[best.genotype[0]]) 
 
                          
  
@@ -197,7 +207,6 @@ def update(t):
     ax2= fig.add_subplot(2, 1, 2)
     ax2.plot(CoordinateX, CoordinateY,'.')
     ax2.plot(tmpX, tmpY)
-    # ax2.plot(CoordinateX[2:5], CoordinateY[2:5])
     ax2.set_ylabel("fitness")
  
     fig.tight_layout()
