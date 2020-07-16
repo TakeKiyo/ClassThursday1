@@ -1020,12 +1020,6 @@ a = [
 bLis = [281,294,294,305,302]
 L = 100
 
-CoordinateX = [37,49,52,20,40,21,17,31,52,51,42,31,5,12,36,52,27,17,13,57,62,42,
-16,8,7,27,30,43,58,58,37,38,46,61,62,63,32,45,59,5,10,21,5,30,39,32,25,25,48,56,30]
-CoordinateY = [52,49,64,26,30,47,63,62,33,21,41,32,25,42,16,41,23,33,13,58,42,57,57,52,
-38,68,48,67,48,27,69,46,10,33,63,69,22,35,15,6,17,10,64,15,10,39,32,55,28,37,40]
-# L = len(CoordinateX)
-
 
 def gtypeToPtype(gtype):
     c = 0;
@@ -1143,14 +1137,6 @@ def step():
     averageFitness.append(np.average([a.fitness for a in population]))
     bestFitness.append(best.fitness)     
     
-
-    # tmpX = []
-    # tmpY = [] 
-    # for i in range(L):
-    #     tmpX.append(CoordinateX[best.genotype[i]])
-    #     tmpY.append(CoordinateY[best.genotype[i]]) 
-    # tmpX.append(CoordinateX[best.genotype[0]])
-    # tmpY.append(CoordinateY[best.genotype[0]]) 
 
                          
  
